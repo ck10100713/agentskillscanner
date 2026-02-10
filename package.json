@@ -1,6 +1,6 @@
 {
   "name": "agentskillscanner",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "description": "Scan and report all available skills for AI coding assistants",
   "license": "MIT",
@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "gunshi": "^0.26.3",
-    "picocolors": "^1.1.1"
+    "picocolors": "^1.1.1",
+    "update-notifier": "^7.3.1"
   },
   "devDependencies": {
     "tsdown": "^0.12.5",

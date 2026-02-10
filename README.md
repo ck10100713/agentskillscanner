@@ -52,6 +52,18 @@ agentskillscanner --level user,project
 agentskillscanner --verbose
 ```
 
+### Supported Platforms
+
+All scan levels (User, Project, Plugin, Enterprise) are supported on macOS, Linux, and Windows.
+
+The Enterprise-level scan directory varies by OS:
+
+| OS      | Enterprise Directory                      |
+| ------- | ----------------------------------------- |
+| macOS   | `/Library/Application Support/ClaudeCode` |
+| Linux   | `/etc/claude-code`                        |
+| Windows | `C:\ProgramData\ClaudeCode`               |
+
 ### Development
 
 ```bash
@@ -107,6 +119,18 @@ agentskillscanner --level user,project
 # 詳細模式
 agentskillscanner --verbose
 ```
+
+### 支援平台
+
+所有掃描層級（User、Project、Plugin、Enterprise）皆支援 macOS、Linux 與 Windows。
+
+Enterprise 層級的掃描目錄依作業系統不同：
+
+| 作業系統 | Enterprise 目錄                            |
+| -------- | ----------------------------------------- |
+| macOS    | `/Library/Application Support/ClaudeCode` |
+| Linux    | `/etc/claude-code`                        |
+| Windows  | `C:\ProgramData\ClaudeCode`               |
 
 ### 開發
 

@@ -282,11 +282,22 @@ export class Scanner {
 
   // -- Enterprise level --
 
-  private scanEnterprise(): SkillInfo[] {
-    if (platform() !== 'darwin') return []
+  private getEnterpriseDir(): string {
+    switch (platform()) {
+      case 'darwin':
+        return '/Library/Application Support/ClaudeCode'
+      case 'linux':
+        return '/etc/claude-code'
+      case 'win32':
+        return 'C:\\ProgramData\\ClaudeCode'
+      default:
+        return ''
+    }
+  }
 
-    const entDir = '/Library/Application Support/ClaudeCode'
-    if (!isDir(entDir)) return []
+  private scanEnterprise(): SkillInfo[] {
+    const entDir = this.getEnterpriseDir()
+    if (!entDir || !isDir(entDir)) return []
 
     const items: SkillInfo[] = []
 

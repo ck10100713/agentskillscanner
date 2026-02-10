@@ -1,6 +1,6 @@
 {
   "name": "agentskillscanner",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Scan and report all available skills for AI coding assistants",
   "license": "MIT",
@@ -14,7 +14,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && node -e \"const f='dist/index.js';const c=require('fs').readFileSync(f,'utf8');require('fs').writeFileSync(f,'#!/usr/bin/env node\\n'+c)\"",
     "dev": "tsx src/index.ts"
   },
   "dependencies": {

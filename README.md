@@ -6,14 +6,24 @@
 
 ## English
 
-Scan and report all available skills for AI coding assistants (Claude Code).
+Scan and report all available skills for AI coding assistants — supports **Claude Code**, **OpenAI Codex CLI**, **Gemini CLI**, and **GitHub Copilot CLI**.
 
-Scans across four levels:
+### Supported Tools & Scan Paths
 
-1. **User** — `~/.claude/skills/*/SKILL.md`
-2. **Project** — `<project>/.claude/skills/*/SKILL.md`
-3. **Plugin** — `installed_plugins.json` + each plugin directory
-4. **Enterprise** — `/Library/Application Support/ClaudeCode/`
+| Tool | Level | Path |
+|------|-------|------|
+| Claude Code | User | `~/.claude/skills/*/SKILL.md` |
+| Claude Code | Project | `<project>/.claude/skills/*/SKILL.md` |
+| Claude Code | Plugin | `installed_plugins.json` + each plugin directory |
+| Claude Code | Enterprise | `/Library/Application Support/ClaudeCode/` |
+| Codex CLI | User | `~/.codex/skills/*/SKILL.md` |
+| Codex CLI | Project | `<repoRoot>/.agents/skills/*/SKILL.md` |
+| Codex CLI | Enterprise | `/etc/codex/skills/*/SKILL.md` |
+| Gemini CLI | User | `~/.gemini/skills/*/SKILL.md` |
+| Gemini CLI | Project | `<project>/.gemini/skills/*/SKILL.md` |
+| Gemini CLI | Plugin | `~/.gemini/extensions/*/gemini-extension.json` |
+| Copilot CLI | User | `~/.copilot/mcp-config.json` (MCP servers) |
+| Copilot CLI | Project | `<project>/.github/copilot-instructions.md` |
 
 ### Installation & Usage
 
@@ -32,6 +42,7 @@ agentskillscanner
 -j, --json              Output in JSON format
 -d, --project-dir DIR   Project directory (default: current working directory)
 -l, --level LEVELS      Filter levels (comma-separated: user,project,plugin,enterprise)
+-t, --tool TOOLS        Filter tools (comma-separated: claude-code,codex,gemini,copilot)
 -v, --verbose           Show full descriptions and paths
 -h, --help              Show help
 ```
@@ -39,11 +50,23 @@ agentskillscanner
 ### Examples
 
 ```bash
-# Scan all levels (default)
+# Scan all tools (default)
 agentskillscanner
 
-# JSON output
+# Only scan Claude Code
+agentskillscanner --tool claude-code
+
+# Only scan Codex CLI
+agentskillscanner --tool codex
+
+# Scan multiple tools
+agentskillscanner --tool codex,gemini
+
+# JSON output (includes tool field)
 agentskillscanner --json
+
+# Combine tool and level filters
+agentskillscanner --level user --tool codex
 
 # Only user and project levels
 agentskillscanner --level user,project
@@ -58,11 +81,11 @@ All scan levels (User, Project, Plugin, Enterprise) are supported on macOS, Linu
 
 The Enterprise-level scan directory varies by OS:
 
-| OS      | Enterprise Directory                      |
-| ------- | ----------------------------------------- |
-| macOS   | `/Library/Application Support/ClaudeCode` |
-| Linux   | `/etc/claude-code`                        |
-| Windows | `C:\ProgramData\ClaudeCode`               |
+| OS      | Claude Code Enterprise Dir                | Codex CLI Enterprise Dir |
+| ------- | ----------------------------------------- | ------------------------ |
+| macOS   | `/Library/Application Support/ClaudeCode` | `/etc/codex/skills`      |
+| Linux   | `/etc/claude-code`                        | `/etc/codex/skills`      |
+| Windows | `C:\ProgramData\ClaudeCode`               | —                        |
 
 ### Development
 
@@ -76,12 +99,24 @@ node dist/index.js
 
 ## 繁體中文
 
-掃描並彙整所有可用的 Claude Code skills，涵蓋四個層級：
+掃描並彙整所有 AI 編碼工具的技能配置 — 支援 **Claude Code**、**OpenAI Codex CLI**、**Gemini CLI** 與 **GitHub Copilot CLI**。
 
-1. **使用者層級 (User)** — `~/.claude/skills/*/SKILL.md`
-2. **專案層級 (Project)** — `<project>/.claude/skills/*/SKILL.md`
-3. **外掛層級 (Plugin)** — `installed_plugins.json` + 各外掛目錄
-4. **企業層級 (Enterprise)** — `/Library/Application Support/ClaudeCode/`
+### 支援工具與掃描路徑
+
+| 工具 | 層級 | 路徑 |
+|------|------|------|
+| Claude Code | 使用者 | `~/.claude/skills/*/SKILL.md` |
+| Claude Code | 專案 | `<project>/.claude/skills/*/SKILL.md` |
+| Claude Code | 外掛 | `installed_plugins.json` + 各外掛目錄 |
+| Claude Code | 企業 | `/Library/Application Support/ClaudeCode/` |
+| Codex CLI | 使用者 | `~/.codex/skills/*/SKILL.md` |
+| Codex CLI | 專案 | `<repoRoot>/.agents/skills/*/SKILL.md` |
+| Codex CLI | 企業 | `/etc/codex/skills/*/SKILL.md` |
+| Gemini CLI | 使用者 | `~/.gemini/skills/*/SKILL.md` |
+| Gemini CLI | 專案 | `<project>/.gemini/skills/*/SKILL.md` |
+| Gemini CLI | 外掛 | `~/.gemini/extensions/*/gemini-extension.json` |
+| Copilot CLI | 使用者 | `~/.copilot/mcp-config.json`（MCP 伺服器） |
+| Copilot CLI | 專案 | `<project>/.github/copilot-instructions.md` |
 
 ### 安裝與使用
 
@@ -100,6 +135,7 @@ agentskillscanner
 -j, --json              以 JSON 格式輸出
 -d, --project-dir DIR   專案目錄（預設：目前工作目錄）
 -l, --level LEVELS      篩選層級（逗號分隔：user,project,plugin,enterprise）
+-t, --tool TOOLS        篩選工具（逗號分隔：claude-code,codex,gemini,copilot）
 -v, --verbose           顯示完整描述與路徑
 -h, --help              顯示說明
 ```
@@ -107,11 +143,23 @@ agentskillscanner
 ### 範例
 
 ```bash
-# 預設掃描所有層級
+# 預設掃描所有工具
 agentskillscanner
 
-# JSON 輸出
+# 只掃描 Claude Code
+agentskillscanner --tool claude-code
+
+# 只掃描 Codex CLI
+agentskillscanner --tool codex
+
+# 掃描多個工具
+agentskillscanner --tool codex,gemini
+
+# JSON 輸出（含 tool 欄位）
 agentskillscanner --json
+
+# 組合工具與層級篩選
+agentskillscanner --level user --tool codex
 
 # 只看使用者與專案層級
 agentskillscanner --level user,project
@@ -126,11 +174,11 @@ agentskillscanner --verbose
 
 Enterprise 層級的掃描目錄依作業系統不同：
 
-| 作業系統 | Enterprise 目錄                            |
-| -------- | ----------------------------------------- |
-| macOS    | `/Library/Application Support/ClaudeCode` |
-| Linux    | `/etc/claude-code`                        |
-| Windows  | `C:\ProgramData\ClaudeCode`               |
+| 作業系統 | Claude Code Enterprise 目錄               | Codex CLI Enterprise 目錄 |
+| -------- | ----------------------------------------- | ------------------------- |
+| macOS    | `/Library/Application Support/ClaudeCode` | `/etc/codex/skills`       |
+| Linux    | `/etc/claude-code`                        | `/etc/codex/skills`       |
+| Windows  | `C:\ProgramData\ClaudeCode`               | —                         |
 
 ### 開發
 

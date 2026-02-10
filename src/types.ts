@@ -1,3 +1,19 @@
+export const Tool = {
+  CLAUDE_CODE: 'claude-code',
+  CODEX: 'codex',
+  GEMINI: 'gemini',
+  COPILOT: 'copilot',
+} as const
+
+export type Tool = (typeof Tool)[keyof typeof Tool]
+
+export const TOOL_LABELS: Record<Tool, string> = {
+  [Tool.CLAUDE_CODE]: 'Claude Code',
+  [Tool.CODEX]: 'OpenAI Codex CLI',
+  [Tool.GEMINI]: 'Gemini CLI',
+  [Tool.COPILOT]: 'GitHub Copilot CLI',
+}
+
 export const SkillLevel = {
   USER: 'user',
   PROJECT: 'project',
@@ -32,6 +48,7 @@ export const TYPE_LABELS: Record<SkillType, string> = {
 
 export interface SkillInfo {
   name: string
+  tool: Tool
   skillType: SkillType
   level: SkillLevel
   description: string
@@ -44,6 +61,7 @@ export interface SkillInfo {
 
 export interface PluginInfo {
   name: string
+  tool: Tool
   marketplace: string
   installPath: string
   version: string
@@ -60,4 +78,11 @@ export interface ScanResult {
 
 export function byLevel(result: ScanResult, level: SkillLevel): SkillInfo[] {
   return result.skills.filter(s => s.level === level)
+}
+
+export function byTool(result: ScanResult, tool: Tool): ScanResult {
+  return {
+    skills: result.skills.filter(s => s.tool === tool),
+    plugins: result.plugins.filter(p => p.tool === tool),
+  }
 }

@@ -1,6 +1,6 @@
 import pc from 'picocolors'
-import type { ScanResult, SkillInfo, PluginInfo } from './types.js'
-import { SkillLevel, SkillType, LEVEL_LABELS, TYPE_LABELS, byLevel } from './types.js'
+import type { ScanResult, SkillInfo, PluginInfo, Tool } from './types.js'
+import { SkillLevel, SkillType, LEVEL_LABELS, TYPE_LABELS, TOOL_LABELS, byLevel, byTool } from './types.js'
 
 function truncate(text: string, maxLen = 72): string {
   const clean = text.replace(/\n/g, ' ').trim()
@@ -8,17 +8,14 @@ function truncate(text: string, maxLen = 72): string {
   return clean.slice(0, maxLen - 3) + '...'
 }
 
-export function formatTerminal(result: ScanResult, verbose: boolean): string {
-  const lines: string[] = []
+function getDistinctTools(result: ScanResult): Tool[] {
+  const tools = new Set<Tool>()
+  for (const s of result.skills) tools.add(s.tool)
+  for (const p of result.plugins) tools.add(p.tool)
+  return [...tools]
+}
 
-  // Title box
-  const title = 'Claude Code 技能掃描報告'
-  const boxW = 58
-  lines.push(pc.cyan('╔' + '═'.repeat(boxW) + '╗'))
-  lines.push(pc.cyan('║') + pc.bold(pc.white('  ' + title.padEnd(boxW - 2))) + pc.cyan('║'))
-  lines.push(pc.cyan('╚' + '═'.repeat(boxW) + '╝'))
-  lines.push('')
-
+function renderLevelBlock(result: ScanResult, verbose: boolean, lines: string[]): boolean {
   let anyOutput = false
 
   // User, Project, Enterprise levels
@@ -101,6 +98,51 @@ export function formatTerminal(result: ScanResult, verbose: boolean): string {
     }
   }
 
+  return anyOutput
+}
+
+export function formatTerminal(result: ScanResult, verbose: boolean): string {
+  const lines: string[] = []
+  const tools = getDistinctTools(result)
+  const multiTool = tools.length > 1
+
+  // Title box
+  let title: string
+  if (multiTool) {
+    title = 'AI Coding Tools 技能掃描報告'
+  } else if (tools.length === 1) {
+    title = `${TOOL_LABELS[tools[0]]} 技能掃描報告`
+  } else {
+    title = 'AI Coding Tools 技能掃描報告'
+  }
+  const boxW = 58
+  lines.push(pc.cyan('╔' + '═'.repeat(boxW) + '╗'))
+  lines.push(pc.cyan('║') + pc.bold(pc.white('  ' + title.padEnd(boxW - 2))) + pc.cyan('║'))
+  lines.push(pc.cyan('╚' + '═'.repeat(boxW) + '╝'))
+  lines.push('')
+
+  let anyOutput = false
+
+  if (multiTool) {
+    // Group by tool
+    for (const tool of tools) {
+      const toolResult = byTool(result, tool)
+      const toolLabel = TOOL_LABELS[tool]
+      lines.push(pc.bold(pc.cyan(`▶ ${toolLabel}`)))
+      lines.push('')
+
+      const hadOutput = renderLevelBlock(toolResult, verbose, lines)
+      if (hadOutput) anyOutput = true
+
+      if (!hadOutput) {
+        lines.push(`  ${pc.dim('(未掃描到任何技能)')}`)
+        lines.push('')
+      }
+    }
+  } else {
+    anyOutput = renderLevelBlock(result, verbose, lines)
+  }
+
   if (!anyOutput) {
     lines.push(`  ${pc.dim('(未掃描到任何技能)')}`)
     lines.push('')
@@ -108,6 +150,22 @@ export function formatTerminal(result: ScanResult, verbose: boolean): string {
 
   // Summary
   lines.push(pc.bold(`── 統計摘要 ${'─'.repeat(47)}`))
+
+  if (multiTool) {
+    // Per-tool stats
+    for (const tool of tools) {
+      const toolResult = byTool(result, tool)
+      const toolLabel = TOOL_LABELS[tool]
+      const count = toolResult.skills.length
+      const pluginCount = toolResult.plugins.length
+      let detail = `${count} 個項目`
+      if (pluginCount > 0) {
+        detail += `, ${pluginCount} 個外掛`
+      }
+      lines.push(`  ${pc.bold(toolLabel)}: ${detail}`)
+    }
+    lines.push('')
+  }
 
   const userCnt = byLevel(result, SkillLevel.USER).length
   const projCnt = byLevel(result, SkillLevel.PROJECT).length
@@ -142,9 +200,12 @@ export function formatTerminal(result: ScanResult, verbose: boolean): string {
 }
 
 export function formatJson(result: ScanResult): string {
+  const tools = getDistinctTools(result)
+
   const output = {
     skills: result.skills.map(s => ({
       name: s.name,
+      tool: s.tool,
       skill_type: s.skillType,
       level: s.level,
       description: s.description,
@@ -156,6 +217,7 @@ export function formatJson(result: ScanResult): string {
     })),
     plugins: result.plugins.map(p => ({
       name: p.name,
+      tool: p.tool,
       marketplace: p.marketplace,
       install_path: p.installPath,
       version: p.version,
@@ -164,6 +226,7 @@ export function formatJson(result: ScanResult): string {
       author: p.author,
       items: p.items.map(i => ({
         name: i.name,
+        tool: i.tool,
         skill_type: i.skillType,
         level: i.level,
         description: i.description,
@@ -181,6 +244,12 @@ export function formatJson(result: ScanResult): string {
       plugin_count: result.plugins.length,
       plugin_items: byLevel(result, SkillLevel.PLUGIN).length,
       total: result.skills.length,
+      by_tool: Object.fromEntries(
+        tools.map(t => {
+          const tr = byTool(result, t)
+          return [t, { skills: tr.skills.length, plugins: tr.plugins.length }]
+        })
+      ),
     },
   }
   return JSON.stringify(output, null, 2)

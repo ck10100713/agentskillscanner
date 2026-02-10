@@ -1,13 +1,22 @@
 import { define } from 'gunshi'
-import { Scanner } from '../scanner.js'
+import { MultiScanner } from '../multi-scanner.js'
 import { formatTerminal, formatJson } from '../formatter.js'
-import { SkillLevel } from '../types.js'
+import { SkillLevel, Tool } from '../types.js'
+import type { Tool as ToolType } from '../types.js'
 
 const LEVEL_MAP: Record<string, SkillLevel> = {
   user: SkillLevel.USER,
   project: SkillLevel.PROJECT,
   plugin: SkillLevel.PLUGIN,
   enterprise: SkillLevel.ENTERPRISE,
+}
+
+const TOOL_MAP: Record<string, ToolType> = {
+  'claude-code': Tool.CLAUDE_CODE,
+  claude: Tool.CLAUDE_CODE,
+  codex: Tool.CODEX,
+  gemini: Tool.GEMINI,
+  copilot: Tool.COPILOT,
 }
 
 export const scanCommand = define({
@@ -31,6 +40,11 @@ export const scanCommand = define({
       short: 'l',
       description: '篩選層級：user, project, plugin, enterprise（可用逗號分隔多個）',
     },
+    tool: {
+      type: 'string',
+      short: 't',
+      description: '篩選工具：claude-code, codex, gemini, copilot（可用逗號分隔多個）',
+    },
     verbose: {
       type: 'boolean',
       short: 'v',
@@ -53,8 +67,19 @@ export const scanCommand = define({
       if (levelFilter.length === 0) levelFilter = undefined
     }
 
-    const scanner = new Scanner(projectDir)
-    const result = scanner.scan(levelFilter)
+    // Parse tool filter
+    let toolFilter: ToolType[] | undefined
+    const toolArg = ctx.values.tool
+    if (toolArg) {
+      const parts = toolArg.split(',').map(s => s.trim().toLowerCase())
+      toolFilter = parts
+        .map(v => TOOL_MAP[v])
+        .filter((v): v is ToolType => v !== undefined)
+      if (toolFilter.length === 0) toolFilter = undefined
+    }
+
+    const scanner = new MultiScanner(projectDir)
+    const result = scanner.scan(toolFilter, levelFilter)
 
     if (json) {
       console.log(formatJson(result))

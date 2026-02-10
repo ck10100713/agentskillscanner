@@ -1,6 +1,6 @@
 {
   "name": "agentskillscanner",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "Scan and report all available skills for AI coding assistants",
   "license": "MIT",

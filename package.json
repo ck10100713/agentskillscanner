@@ -1,0 +1,29 @@
+{
+  "name": "agentskillscanner",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Scan and report all available skills for AI coding assistants",
+  "license": "MIT",
+  "bin": {
+    "agentskillscanner": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "gunshi": "^0.26.3",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "tsdown": "^0.12.5",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}

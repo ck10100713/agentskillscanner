@@ -1,6 +1,68 @@
 # agentskillscanner
 
+[繁體中文](#繁體中文) | [English](#english)
+
+---
+
+## English
+
 Scan and report all available skills for AI coding assistants (Claude Code).
+
+Scans across four levels:
+
+1. **User** — `~/.claude/skills/*/SKILL.md`
+2. **Project** — `<project>/.claude/skills/*/SKILL.md`
+3. **Plugin** — `installed_plugins.json` + each plugin directory
+4. **Enterprise** — `/Library/Application Support/ClaudeCode/`
+
+### Installation & Usage
+
+```bash
+# Option 1: Run directly with npx (no install needed)
+npx agentskillscanner
+
+# Option 2: Install globally
+npm install -g agentskillscanner
+agentskillscanner
+```
+
+### CLI Options
+
+```
+-j, --json              Output in JSON format
+-d, --project-dir DIR   Project directory (default: current working directory)
+-l, --level LEVELS      Filter levels (comma-separated: user,project,plugin,enterprise)
+-v, --verbose           Show full descriptions and paths
+-h, --help              Show help
+```
+
+### Examples
+
+```bash
+# Scan all levels (default)
+agentskillscanner
+
+# JSON output
+agentskillscanner --json
+
+# Only user and project levels
+agentskillscanner --level user,project
+
+# Verbose mode
+agentskillscanner --verbose
+```
+
+### Development
+
+```bash
+pnpm install
+pnpm build
+node dist/index.js
+```
+
+---
+
+## 繁體中文
 
 掃描並彙整所有可用的 Claude Code skills，涵蓋四個層級：
 
@@ -9,7 +71,7 @@ Scan and report all available skills for AI coding assistants (Claude Code).
 3. **外掛層級 (Plugin)** — `installed_plugins.json` + 各外掛目錄
 4. **企業層級 (Enterprise)** — `/Library/Application Support/ClaudeCode/`
 
-## 安裝與使用
+### 安裝與使用
 
 ```bash
 # 方式一：npx 直接執行（免安裝）
@@ -20,7 +82,7 @@ npm install -g agentskillscanner
 agentskillscanner
 ```
 
-## CLI 選項
+### CLI 選項
 
 ```
 -j, --json              以 JSON 格式輸出
@@ -30,7 +92,7 @@ agentskillscanner
 -h, --help              顯示說明
 ```
 
-## 範例
+### 範例
 
 ```bash
 # 預設掃描所有層級
@@ -46,7 +108,7 @@ agentskillscanner --level user,project
 agentskillscanner --verbose
 ```
 
-## 開發
+### 開發
 
 ```bash
 pnpm install

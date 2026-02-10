@@ -1,1 +1,1 @@
-export { scanCommand } from './scan.js'
+export { createScanCommand } from './scan.js'

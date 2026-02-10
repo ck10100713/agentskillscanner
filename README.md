@@ -43,7 +43,8 @@ agentskillscanner
 -d, --project-dir DIR   Project directory (default: current working directory)
 -l, --level LEVELS      Filter levels (comma-separated: user,project,plugin,enterprise)
 -t, --tool TOOLS        Filter tools (comma-separated: claude-code,codex,gemini,copilot)
--v, --verbose           Show full descriptions and paths
+-V, --verbose           Show full descriptions and paths
+-v, --version           Show version number
 -h, --help              Show help
 ```
 
@@ -136,7 +137,8 @@ agentskillscanner
 -d, --project-dir DIR   專案目錄（預設：目前工作目錄）
 -l, --level LEVELS      篩選層級（逗號分隔：user,project,plugin,enterprise）
 -t, --tool TOOLS        篩選工具（逗號分隔：claude-code,codex,gemini,copilot）
--v, --verbose           顯示完整描述與路徑
+-V, --verbose           顯示完整描述與路徑
+-v, --version           顯示版本號
 -h, --help              顯示說明
 ```
 

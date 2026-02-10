@@ -1,6 +1,6 @@
 {
   "name": "agentskillscanner",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "type": "module",
   "description": "Scan and report all available skills for AI coding assistants (Claude Code, Codex CLI, Gemini CLI, Copilot CLI)",
   "license": "MIT",

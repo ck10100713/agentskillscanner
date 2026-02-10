@@ -101,7 +101,7 @@ function renderLevelBlock(result: ScanResult, verbose: boolean, lines: string[])
   return anyOutput
 }
 
-export function formatTerminal(result: ScanResult, verbose: boolean): string {
+export function formatTerminal(result: ScanResult, verbose: boolean, version?: string): string {
   const lines: string[] = []
   const tools = getDistinctTools(result)
   const multiTool = tools.length > 1
@@ -115,9 +115,14 @@ export function formatTerminal(result: ScanResult, verbose: boolean): string {
   } else {
     title = 'AI Coding Tools 技能掃描報告'
   }
+  const vTag = version ? `v${version}` : ''
   const boxW = 58
   lines.push(pc.cyan('╔' + '═'.repeat(boxW) + '╗'))
-  lines.push(pc.cyan('║') + pc.bold(pc.white('  ' + title.padEnd(boxW - 2))) + pc.cyan('║'))
+  const innerW = boxW - 2
+  const titleLine = vTag
+    ? '  ' + title + ' '.repeat(Math.max(1, innerW - title.length - vTag.length - 2)) + vTag
+    : '  ' + title.padEnd(innerW)
+  lines.push(pc.cyan('║') + pc.bold(pc.white(titleLine)) + pc.cyan('║'))
   lines.push(pc.cyan('╚' + '═'.repeat(boxW) + '╝'))
   lines.push('')
 
@@ -199,10 +204,11 @@ export function formatTerminal(result: ScanResult, verbose: boolean): string {
   return lines.join('\n')
 }
 
-export function formatJson(result: ScanResult): string {
+export function formatJson(result: ScanResult, version?: string): string {
   const tools = getDistinctTools(result)
 
   const output = {
+    ...(version ? { version } : {}),
     skills: result.skills.map(s => ({
       name: s.name,
       tool: s.tool,
